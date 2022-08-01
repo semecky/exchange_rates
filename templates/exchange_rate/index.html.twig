@@ -1,0 +1,18 @@
+{% extends 'layout.html.twig' %}
+
+{% block title %} Курс на INSERT CURRENT DATE {% endblock %}
+
+{% block page_contents %}
+    <div {{ stimulus_controller('exchange-rate') }}>
+
+        <input type="text" name="date" class="datepicker" {{ stimulus_target('exchange-rate', 'datepicker') }}>
+
+        <button {{ stimulus_target('exchange-rate', 'button') }} {{ stimulus_action('exchange-rate', 'get') }}>
+            Получить курс
+        </button>
+        <div class="filters" {{ stimulus_target('exchange-rate', 'filters') }}></div>
+        <div class="sorts" {{ stimulus_target('exchange-rate', 'sorts') }}></div>
+        <div class="output" {{ stimulus_target('exchange-rate', 'output') }}></div>
+
+    </div>
+{% endblock %}
