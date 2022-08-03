@@ -3,6 +3,7 @@
 namespace App\Service\ExchangeRate\Gate;
 
 use App\Service\ExchangeRate\GateContract;
+use App\Service\ExchangeRate\GateException;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Psr7\Stream;
@@ -27,13 +28,13 @@ class RussiaCentralBankGateService implements GateContract
         $this->crawler = new Crawler();
     }
 
-    public function get(\DateTime $date)
+    public function get(\DateTime $date):array
     {
         try {
             $data = $this->request($date);
             return $this->format($data);
         } catch (GuzzleException $e){
-            return false;
+            throw new GateException('Gate error: '.$e->getMessage());
         }
     }
 
@@ -57,10 +58,11 @@ class RussiaCentralBankGateService implements GateContract
         $this->crawler->addContent($data);
         return $this->crawler->filter('Valute')->each(function (Crawler $node, $i) {
             return [
-                'origin_id'     => $node->filter('NumCode')->text(),
+                'origin_id'     => $node->attr('ID'),
+                'origin_number' => $node->filter('NumCode')->text(),
                 'origin_code'   => $node->filter('CharCode')->text(),
                 'name'          => $node->filter('Name')->text(),
-                'rate'          => $node->filter('Value')->text(),
+                'rate'          => str_replace(',', '.', $node->filter('Value')->text()),
             ];
         });
     }

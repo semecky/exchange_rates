@@ -1,6 +1,11 @@
 <?php
 namespace App\Service\ExchangeRate;
 interface GateContract{
-    public function get(\DateTime $date);
+    /**
+     * @param \DateTime $date
+     * @return array
+     * @throws GateException
+     */
+    public function get(\DateTime $date):array;
 
 }
